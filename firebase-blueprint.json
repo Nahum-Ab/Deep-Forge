@@ -1,0 +1,32 @@
+{
+  "entities": {
+    "subscribers": {
+      "title": "Email Subscribers",
+      "description": "Users who have registered for product updates.",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Subscriber's email address."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the user subscribed."
+        },
+        "source": {
+          "type": "string",
+          "description": "Where the user subscribed from (e.g., 'product_access')."
+        }
+      },
+      "required": ["email", "createdAt"]
+    }
+  },
+  "firestore": {
+    "subscribers/{subscriberId}": {
+      "schema": "subscribers",
+      "description": "Collection of email subscribers."
+    }
+  }
+}

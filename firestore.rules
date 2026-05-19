@@ -1,0 +1,27 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global helpers
+    function isSignedIn() { return request.auth != null; }
+    function isValidEmail(email) { return email is string && email.size() <= 256 && email.matches('^[^@]+@[^@]+\\.[^@]+$'); }
+
+    match /subscribers/{subscriberId} {
+      // Allow anyone to subscribe (create), but no one can read, list, update or delete via client
+      allow create: if isValidSubscriber(request.resource.data);
+      allow read, update, delete, list: if false; 
+    }
+
+    function isValidSubscriber(data) {
+      return data.keys().hasAll(['email', 'createdAt', 'source']) 
+        && data.keys().size() == 3
+        && isValidEmail(data.email)
+        && data.createdAt == request.time
+        && data.source is string && data.source.size() <= 50;
+    }
+  }
+}
